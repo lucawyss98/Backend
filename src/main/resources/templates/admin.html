@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My Account - Admin Panel</title>
+</head>
+<body>
+	<div id="courtdiv">
+		<table id="courttable">
+			<thead>
+				<th>Court id</th> 
+				<th>Court name</th>
+				<th>Sport</th>
+				<th>Opening time</th>
+				<th>Closing time</th>
+			</thead>
+		</table>
+	</div>
+	<div>
+		<form id="editForm">
+			<div>
+				<label for="id">Id:</label>
+				<label id="id"></label> 
+			</div>
+	
+			<div>
+				<label for="name">Name</label>
+				<input type="text" id="name">  
+			</div>
+				 
+			<div>
+				<label for="sport">Sport</label>
+				<input type="select" id="sport">
+			</div>
+	
+			<div>
+				<label for="openTime">Opening time</label>
+				<input type="text" id="openTime">
+			</div>
+	
+			<div>
+				<label for="closeTime">Closing time</label>
+				<input type="text" id="closeTime">
+			</div>
+	
+			<div>
+				<input type="submit" value="Save" id="submitBtn">
+				<input type="reset" value="Delete" id="deleteBtn">
+			</div>    
+			
+		</form>
+	</div>
+</body>
+<script src="/static/admin.js"></script>
+</html>
