@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import ReservationServerBackend.Backend.authentication.authMessages.RegisterRequest;
 import ReservationServerBackend.Backend.entity.Court;
 import ReservationServerBackend.Backend.entity.Reservation;
 import ReservationServerBackend.Backend.entity.User;
@@ -28,6 +29,7 @@ public class ReservationController {
     private final UserRepository userRepo;
     private final CourtRepository courtRepo;
     private final ReservationRepository reservationRepo;
+
 
     // REST Reservation
 
@@ -92,7 +94,36 @@ public class ReservationController {
         return "ok";
     }
 
-//Views
+    //++++++++++++REST USER +++++++++++
+    @PostMapping("/register")
+    @ResponseBody
+    public String register(@RequestParam RegisterRequest ur){
+        System.out.println(ur);
+        try{
+            User e = userRepo.findByUsername(ur.getUsername()).orElseThrow();
+            return "username";
+        }catch (Exception e){
+            try{
+                User e1 = userRepo.findByEmail(ur.getEmail()).orElseThrow();
+                return "email";
+            }catch (Exception ex){
+                //TODO password encoder
+                User u = User.builder()
+                    .username(ur.getUsername())
+                    .email(ur.getEmail())
+                    .firstname(ur.getFirstname())
+                    .lastname(ur.getLastname())
+                    .password(ur.getPassword())
+                    .build();
+                userRepo.save(u);
+                return "ok";
+            }
+        }
+        
+        
+    }
+
+    //Views
     
     @GetMapping("/")
     public String index(){

@@ -1,4 +1,4 @@
-const SERVERURL = "http://localhost:8080/reservation"
+const SERVERURL = "http://localhost:8080/"
 
 
 var courtselector = document.getElementById("court")
@@ -8,32 +8,17 @@ var dateselector = document.getElementById("date")
 var reservations = []
 var courts = []
 
-dateselector.onchange = setTimeslots()
-courtselector.onchange = setTimeslots()
+window.onload(loadReservations())
+dateselector.addEventListener("change", setTimeslots())
+courtselector.addEventListener("change", setTimeslots())
 
-window.onload(loadReservations)
 
 
 // +++++ API +++++++++
 
 function loadOptions(){
-
-    fetch(SERVERURL + "Courts", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        })
-        .then((response) => response.json())
-        .then((data) => buildOptions(data.answer))
-        .catch((err) => console.error(err));
-
-}
-
-function loadReservations(){
-
-    fetch(SERVERURL + "all", {
+    
+    fetch(SERVERURL + "courts", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -41,14 +26,22 @@ function loadReservations(){
         },
     })
     .then((response) => response.json())
-    .then((data) => buildReservations(data.answer))
+    .then((data) => buildOptions(data.answer))
+    .catch((err) => console.error(err));
+
+}
+
+function loadReservations(){
+
+    fetch(SERVERURL + "all")
+    .then((response) => response.json())
+    .then((data) => console.log(data))
     .catch((err) => console.error(err)); 
     
     loadOptions
 }
 
 function makeReservation(){
-
 
     fetch(SERVERURL + "add", {
         method: "POST",
@@ -59,7 +52,7 @@ function makeReservation(){
         body: JSON.stringify(reservation),
     })
     .then((response) => response.json())
-    .then((data) => checkResponse(data.answer))
+    .then((data) => console.log(data))
     .catch((err) => console.error(err));
 
     loadReservations()

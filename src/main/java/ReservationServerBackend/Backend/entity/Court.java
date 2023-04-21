@@ -36,6 +36,12 @@ public class Court {
     @OneToMany(mappedBy = "court_id")
     private List<Reservation> reservations;
 
+    public Court(String name, String sport, int opentime, int closetime){
+        this.name = name;
+        this.sport = Sport.valueOf(sport);
+        this.openTime = opentime;
+        this.closeTime = closetime;
+    }
     
     public void addReservation(Reservation r){
         reservations.add(r);

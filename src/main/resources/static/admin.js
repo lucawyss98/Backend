@@ -1,19 +1,18 @@
-const SERVERURL = "http://localhost:8080/reservation/";
+const SERVERURL = "http://localhost:8080/";
 
-var form = document.getElementById("editForm")
-var id = form.elements["id"]
-var cname = form.elements["name"]
-var sport = form.elements["sport"]
-var opentime = form.elements["openTime"]
-var closetime = form.elements["closeTime"]
+var id = getElementById("id")
+var cname = getElementById("name")
+var sport = getElementById("sport")
+var opentime = getElementById("openTime")
+var closetime = getElementById("closeTime")
+var saveBtn = getElementById("submitBtn")
+var deleteBtn = getElementById("deleteBtn")
 
-
-window.onload(loadCourts)
-
-
-
-form.addEventListener("submit", addCourt)
-form.addEventListener("reset", deleteCourt)
+saveBtn.addEventListener("click", addCourt)
+deleteBtn.addEventListener("click", deleteCourt)
+window.addEventListener('load', (event) => {
+    loadCourts;
+  });
 
 // ++++  API STUFF +++++
 
@@ -67,6 +66,7 @@ function deleteCourt(){
 }
 
 function loadCourts(){
+    console.log("loadcourts")
     fetch(SERVERURL + "courts", {
         method: "GET",
         headers: {
