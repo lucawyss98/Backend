@@ -1,12 +1,16 @@
 package ReservationServerBackend.Backend.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import ReservationServerBackend.Backend.entity.Court;
@@ -18,7 +22,7 @@ import ReservationServerBackend.Backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@RestController
+@Controller
 public class ReservationController {
 
     private final UserRepository userRepo;
@@ -28,6 +32,7 @@ public class ReservationController {
     // REST Reservation
 
     @PostMapping("/add")
+    @ResponseBody
     public String addReservation(Reservation reservation){
         //TODO logik, ist termin frei
         reservationRepo.save(reservation);
@@ -35,17 +40,27 @@ public class ReservationController {
     }
 
     @GetMapping("/all")
+    @ResponseBody
     public List<Reservation> reservations(){
         return reservationRepo.findAll();
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/mine/{username}")
+    @ResponseBody
     public List<Reservation> myReservation(@PathVariable String username){
-        User u = userRepo.findByUsername(username).orElseThrow();
-        return u.getReservations();
+        List<Reservation> reservations= new ArrayList<Reservation>();
+        try{
+         User u = userRepo.findByUsername(username).orElseThrow(null);
+         reservations = u.getReservations();  
+        }catch(Exception e){
+            return reservations;
+        }
+        
+        return reservations;
     }
 
     @DeleteMapping("/delete")
+    @ResponseBody
     public String deleteReservation(@RequestParam int id){
         try{
             reservationRepo.deleteById(id);
@@ -58,24 +73,55 @@ public class ReservationController {
     // REST Courts
 
     @GetMapping("/courts")
+    @ResponseBody
     public List<Court> courts(){
         return courtRepo.findAll();
     }
 
     @PostMapping("/addcourt")
+    @ResponseBody
     public String editCourt(@RequestParam Court court){
         courtRepo.save(court);
         return "ok";
     }
 
     @DeleteMapping("/deletecourt")
+    @ResponseBody
     public String deleteCourt(@RequestParam int id){
         courtRepo.deleteById(id);
         return "ok";
     }
 
-
+//Views
     
+    @GetMapping("/")
+    public String index(){
+        return "index";
+    }
 
+    @GetMapping("/reservation")
+    public String reservation(){
+        return "reservation";
+    }
+
+    @GetMapping("/admin")
+    public String admin(){
+        return "admin";
+    }
+
+    @GetMapping("/login")
+    public String login(){
+        return "login";
+    }
+
+    @GetMapping("/register")
+    public String register(){
+        return "register";
+    }
+
+    @GetMapping("/user")
+    public String user(){
+        return "user";
+    }
 
 }

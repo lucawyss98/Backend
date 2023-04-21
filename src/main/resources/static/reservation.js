@@ -1,9 +1,9 @@
 const SERVERURL = "http://localhost:8080/reservation"
 
-var rForm = document.getElementById("makeReservation")
-var courtselector = rForm.elements["court"]
-var timeselector = rForm.elements["time"]
-var dateselector = rForm.elements["date"]
+
+var courtselector = document.getElementById("court")
+var timeselector = document.getElementById("time")
+var dateselector = document.getElementById("date")
 
 var reservations = []
 var courts = []
