@@ -1,5 +1,7 @@
 package ReservationServerBackend.Backend.entity;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -25,10 +27,9 @@ public class Reservation {
     @Id
     @GeneratedValue
     private int id;
-    private int duration;
-    private Date date;
-    private List<Integer> timeslots;
-
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private LocalDate date;
 
     @ManyToOne
     @JoinColumn(name = "court_id", nullable= false)

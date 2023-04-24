@@ -1,40 +1,39 @@
 const SERVERURL = "http://localhost:8080/";
 
-var id = getElementById("id")
-var cname = getElementById("name")
-var sport = getElementById("sport")
-var opentime = getElementById("openTime")
-var closetime = getElementById("closeTime")
-var saveBtn = getElementById("submitBtn")
-var deleteBtn = getElementById("deleteBtn")
+var idl = document.getElementById("id")
+var cname = document.getElementById("name")
+var sport = document.getElementById("sport")
+var opentime = document.getElementById("openTime")
+var closetime = document.getElementById("closeTime")
+var saveBtn = document.getElementById("submitBtn")
+var deleteBtn = document.getElementById("deleteBtn")
 
 saveBtn.addEventListener("click", addCourt)
 deleteBtn.addEventListener("click", deleteCourt)
-window.addEventListener('load', (event) => {
-    loadCourts;
-  });
+window.onload = loadCourts
 
 // ++++  API STUFF +++++
 
 function addCourt(){
 
-    if(id != null && id != ""){
+
+    if(idl.innerHTML != null && idl.innerHTML != "" && idl.innerHTML != undefined){
         var court = {
-            id: id.value,
-            name: cname.value,
-            sport: sport.value,
-            openTime: opentime.value,
-            closeTime: closetime.value
+            "id": idl.innerHTML,
+            "name": cname.value,
+            "sport": sport.value,
+            "openTime": opentime.value,
+            "closeTime": closetime.value
         }
     }else{
         var court = {
-            name: cname.value,
-            sport: sport.value,
-            openTime: opentime.value,
-            closeTime: closetime.value
+            "name": cname.value,
+            "sport": sport.value,
+            "openTime": opentime.value,
+            "closeTime": closetime.value
         }
     }
-    
+
     fetch(SERVERURL + "addcourt", {
         method: "POST",
         headers: {
@@ -43,25 +42,28 @@ function addCourt(){
         },
         body: JSON.stringify(court),
     })
-    .then((response) => response.json())
-    .then((data) => responseCheck(data.answer))
-    .catch((err) => console.error(err));    
+    .then((response) => responseCheck(response))
+    .catch((err) => console.error(err));   
 }
 
 function deleteCourt(){
 
-    let id = form.elements["id"]
-    fetch(SERVERURL + "deletecourt", {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify(id),
-    })
-    .then((response) => response.json())
-    .then((data) => registerCheck(data.answer))
-    .catch((err) => console.error(err));
+    let id = idl.innerHTML
+    console.log(id)
+    if(id != null && id != undefined && id !=""){
+
+        fetch(SERVERURL + "deletecourt", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify(id),
+        })
+        .then((response) => responseCheck(response))
+        .catch((err) => console.error(err));
+
+    }
 
 }
 
@@ -73,10 +75,10 @@ function loadCourts(){
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
         },
-        body: JSON.stringify(courtid),
+        body: JSON.stringify(),
     })
         .then((response) => response.json())
-        .then((data) => buildCourts(data.answer))
+        .then((data) => buildCourts(data))
         .catch((err) => console.error(err));
    
 }
@@ -84,45 +86,58 @@ function loadCourts(){
 // ++++++ FUNKTIONEN ++++++++++
 
 function buildCourts(courts){
-    var courttable = document.getElementById("courttable")
+    console.log(courts)
+    let courttable = document.getElementById("courtbody")
 
     courts.forEach(court => {
-        var row = document.createElement("tr")
-        row.className = court.id
+        console.log(court)
+        let row = document.createElement("tr");
+        row.id = court.id
 
         //create Cells
-        var idcell = document.createElement("td").innerText(court.id)
-        var namecell= document.createElement("td").innerText(court.name)
-        var sportcell= document.createElement("td").innerText(court.sport)
-        var opentime= document.createElement("td").innerText(court.openTime)
-        var closetime= document.createElement("td").innerText(court.closeTime)
-        var buttoncell= document.createElement("td")
-        var button = document.createElement("button")
-        button.value = "edit"
+        let idcell = document.createElement("td")
+        idcell.innerHTML = court.id
+        let namecell= document.createElement("td")
+        namecell.innerHTML =court.name
+        let sportcell= document.createElement("td")
+        sportcell.innerHTML = court.sport
+        let opentime= document.createElement("td")
+        opentime.innerHTML = court.openTime
+        let closetime= document.createElement("td")
+        closetime.innerHTML = court.closeTime
+        let button = document.createElement("button")
+        button.innerHTML = "edit"
         button.id = court.id
-        button.addEventListener("click", editcall(this.id))
+        button.addEventListener("click", function(){
+            editcall(this.id)
+        })
 
         //add cellse to Row
-        row.appendChild(idcell, namecell, sportcell, opentime, closetime, buttoncell)
-
+        row.append(idcell, namecell, sportcell, opentime, closetime, button)
         courttable.appendChild(row)
-
     });
+    
+    
 }
 
 function editcall(id){
-    let editrow = document.getElementsByClassName(id)
 
-    id.value = editrow[0].value
-    cname.value = editrow[1].value
-    sport.value = editrow[2].value
-    opentime.value = editrow[3].value
-    closetime.value = editrow[4].value
+    if(id != null){
+        let editrow = document.getElementById(id)
+        console.log(editrow)
+        idl.innerHTML = editrow.cells[0].innerHTML
+        cname.value = editrow.cells[1].innerHTML
+        sport.value = editrow.cells[2].innerHTML
+        opentime.value = editrow.cells[3].innerHTML
+        closetime.value = editrow.cells[4].innerHTML  
+    }
 
 }
 
+//TODO
 function responseCheck(data){
-    //TODO close window
+    console.log(data)
+    window.location.reload();
 }
 
 

@@ -1,6 +1,7 @@
 package ReservationServerBackend.Backend.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -8,14 +9,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import ReservationServerBackend.Backend.authentication.authMessages.RegisterRequest;
+import ReservationServerBackend.Backend.controller.msgs.AddCourtMsg;
 import ReservationServerBackend.Backend.entity.Court;
 import ReservationServerBackend.Backend.entity.Reservation;
+import ReservationServerBackend.Backend.entity.Sport;
 import ReservationServerBackend.Backend.entity.User;
 import ReservationServerBackend.Backend.repository.CourtRepository;
 import ReservationServerBackend.Backend.repository.ReservationRepository;
@@ -35,7 +35,7 @@ public class ReservationController {
 
     @PostMapping("/add")
     @ResponseBody
-    public String addReservation(Reservation reservation){
+    public String addReservation(@RequestBody Reservation reservation){
         //TODO logik, ist termin frei
         reservationRepo.save(reservation);
         return "ok";
@@ -50,9 +50,11 @@ public class ReservationController {
     @GetMapping("/mine/{username}")
     @ResponseBody
     public List<Reservation> myReservation(@PathVariable String username){
+
         List<Reservation> reservations= new ArrayList<Reservation>();
+
         try{
-         User u = userRepo.findByUsername(username).orElseThrow(null);
+         User u = userRepo.findByUsername(username).orElseThrow();
          reservations = u.getReservations();  
         }catch(Exception e){
             return reservations;
@@ -63,7 +65,7 @@ public class ReservationController {
 
     @DeleteMapping("/delete")
     @ResponseBody
-    public String deleteReservation(@RequestParam int id){
+    public String deleteReservation(@RequestBody int id){
         try{
             reservationRepo.deleteById(id);
             return "ok";
@@ -74,6 +76,11 @@ public class ReservationController {
 
     // REST Courts
 
+    @GetMapping("/sports")
+    public List<Sport> getSport(){
+        return Arrays.asList(Sport.values());
+    }
+
     @GetMapping("/courts")
     @ResponseBody
     public List<Court> courts(){
@@ -82,14 +89,21 @@ public class ReservationController {
 
     @PostMapping("/addcourt")
     @ResponseBody
-    public String editCourt(@RequestParam Court court){
-        courtRepo.save(court);
+    public String editCourt(@RequestBody AddCourtMsg courtmsg){
+        Court c = Court.builder()
+                    .name(courtmsg.getName())
+                    .sport(Sport.valueOf(courtmsg.getSport()))
+                    .openTime(courtmsg.getOpenTime())
+                    .closeTime(courtmsg.getCloseTime())
+                    .build();
+
+        courtRepo.save(c);
         return "ok";
     }
 
     @DeleteMapping("/deletecourt")
     @ResponseBody
-    public String deleteCourt(@RequestParam int id){
+    public String deleteCourt(@RequestBody int id){
         courtRepo.deleteById(id);
         return "ok";
     }
@@ -97,7 +111,7 @@ public class ReservationController {
     //++++++++++++REST USER +++++++++++
     @PostMapping("/register")
     @ResponseBody
-    public String register(@RequestParam RegisterRequest ur){
+    public String register(@RequestBody RegisterRequest ur){
         System.out.println(ur);
         try{
             User e = userRepo.findByUsername(ur.getUsername()).orElseThrow();

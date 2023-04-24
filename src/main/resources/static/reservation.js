@@ -8,7 +8,7 @@ var dateselector = document.getElementById("date")
 var reservations = []
 var courts = []
 
-window.onload(loadReservations())
+window.onload = loadReservations()
 dateselector.addEventListener("change", setTimeslots())
 courtselector.addEventListener("change", setTimeslots())
 
@@ -35,10 +35,9 @@ function loadReservations(){
 
     fetch(SERVERURL + "all")
     .then((response) => response.json())
-    .then((data) => console.log(data))
+    .then((data) => buildReservations(data))
     .catch((err) => console.error(err)); 
     
-    loadOptions
 }
 
 function makeReservation(){
@@ -71,12 +70,12 @@ function buildReservations(res){
 
         var table = document.createElement('table');
         var tablehead = document.createElement("thead")
-        var tdate, ttime, tuser= document.createElement("th")
-        tdate.textContent("Date")
-        ttime.textContent("Time")
-        tuser.textContent("User")
-        tablehead.appendChild(tdate, ttime, tuser)
-        table.appendChild(tablehead)
+        var tdate, ttime, tuser = document.createElement("th")
+        tdate.innerHTML = "Date"
+        ttime.innerHTML = "Time"
+        tuser.innerHTML = "User"
+        tablehead.append(tdate, ttime, tuser)
+        table.append(tablehead)
 
         //loading all reservations into tables
         
@@ -85,12 +84,14 @@ function buildReservations(res){
             if(reservation.court.name == court.name){
 
                 var row = document.createElement('tr');
-                var cell = document.createElement("td").textContent(reservation.date)
-                var cell1 = document.createElement("td").textContent(reservation.time)
-                var cell2 = document.createElement("td").textContent(reservation.user)
-                row.appendChild(cell)
-                row.appendChild(cell1)
-                row.appendChild(cell2)
+                var cell = document.createElement("td")
+                cell.innerHTML = reservation.date
+                var cell1 = document.createElement("td")
+                cell1.innerHTML = reservation.timeSlots
+                var cell2 = document.createElement("td")
+
+
+                row.append(cell, cell1, cell2)
                 table.appendChild(row);
                 
             }
@@ -111,6 +112,7 @@ function buildOptions(courts){
     courts.forEach(court => {
 
         let option = document.createElement("option")
+        option.value = court.name
         courtselector.appendChild(option)
 
     })
@@ -151,7 +153,7 @@ function setTimeslots(){
         let unique = ctimes.filter((o) => usedtimeslots.indexOf(o) === -1)
         unique.forEach((u) => {
             let op = document.createElement("option")
-            o.value = u
+            op.value = u
             timeselector.appendChild(op)
         })
     }
