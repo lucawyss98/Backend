@@ -1,5 +1,6 @@
 package ReservationServerBackend.Backend.entity;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -30,13 +31,13 @@ public class Court {
     @Enumerated(EnumType.STRING)
     private Sport sport;
 
-    private int openTime;
-    private int closeTime;
+    private LocalTime openTime;
+    private LocalTime closeTime;
     
     @OneToMany(mappedBy = "court_id")
     private List<Reservation> reservations;
 
-    public Court(String name, String sport, int opentime, int closetime){
+    public Court(String name, String sport, LocalTime opentime, LocalTime closetime){
         this.name = name;
         this.sport = Sport.valueOf(sport);
         this.openTime = opentime;

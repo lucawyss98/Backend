@@ -7,12 +7,18 @@ var opentime = document.getElementById("openTime")
 var closetime = document.getElementById("closeTime")
 var saveBtn = document.getElementById("submitBtn")
 var deleteBtn = document.getElementById("deleteBtn")
+var newBtn = document.getElementById("newBtn")
+var courtForm = document.getElementById("courtForm")
+
 
 saveBtn.addEventListener("click", addCourt)
 deleteBtn.addEventListener("click", deleteCourt)
+newBtn.addEventListener("click", resetForm)
 window.onload = loadCourts
 
 // ++++  API STUFF +++++
+
+// TODO maybe function fetchfunction(method, body) returns response
 
 function addCourt(){
 
@@ -49,7 +55,6 @@ function addCourt(){
 function deleteCourt(){
 
     let id = idl.innerHTML
-    console.log(id)
     if(id != null && id != undefined && id !=""){
 
         fetch(SERVERURL + "deletecourt", {
@@ -64,11 +69,10 @@ function deleteCourt(){
         .catch((err) => console.error(err));
 
     }
-
 }
 
 function loadCourts(){
-    console.log("loadcourts")
+
     fetch(SERVERURL + "courts", {
         method: "GET",
         headers: {
@@ -77,20 +81,29 @@ function loadCourts(){
         },
         body: JSON.stringify(),
     })
+    .then((response) => response.json())
+    .then((data) => buildCourts(data))
+    .catch((err) => console.error(err));
+
+   loadOptions()
+}
+
+function loadOptions(){
+
+    fetch(SERVERURL + "sports")
         .then((response) => response.json())
-        .then((data) => buildCourts(data))
+        .then((data) => buildoptions(data))
         .catch((err) => console.error(err));
-   
 }
 
 // ++++++ FUNKTIONEN ++++++++++
 
 function buildCourts(courts){
-    console.log(courts)
+
     let courttable = document.getElementById("courtbody")
 
     courts.forEach(court => {
-        console.log(court)
+
         let row = document.createElement("tr");
         row.id = court.id
 
@@ -102,9 +115,9 @@ function buildCourts(courts){
         let sportcell= document.createElement("td")
         sportcell.innerHTML = court.sport
         let opentime= document.createElement("td")
-        opentime.innerHTML = court.openTime
+        opentime.innerHTML = court.openTime.slice(0,5)
         let closetime= document.createElement("td")
-        closetime.innerHTML = court.closeTime
+        closetime.innerHTML = court.closeTime.slice(0,5)
         let button = document.createElement("button")
         button.innerHTML = "edit"
         button.id = court.id
@@ -115,29 +128,71 @@ function buildCourts(courts){
         //add cellse to Row
         row.append(idcell, namecell, sportcell, opentime, closetime, button)
         courttable.appendChild(row)
-    });
-    
-    
+    }); 
+}
+
+function buildoptions(data){
+    data.forEach(c => {
+        let o = document.createElement("option")
+        o.textContent = c
+        sport.add(o)
+    })
+    buildTimes()
+}
+
+function buildTimes(){
+
+    let timeslots = clockArray()
+    timeslots.forEach(t =>{
+        let o = document.createElement("option")
+        let o1 = document.createElement("option")
+        o.textContent = t
+        o.value = t
+        o1.textContent = t
+        o1.value = t
+        opentime.add(o)
+        closetime.add(o1)
+    })
 }
 
 function editcall(id){
 
     if(id != null){
         let editrow = document.getElementById(id)
-        console.log(editrow)
+        
         idl.innerHTML = editrow.cells[0].innerHTML
         cname.value = editrow.cells[1].innerHTML
         sport.value = editrow.cells[2].innerHTML
         opentime.value = editrow.cells[3].innerHTML
         closetime.value = editrow.cells[4].innerHTML  
     }
-
 }
+
+function resetForm(){
+    courtForm.reset()
+    idl.innerHTML = ""
+}
+
+function clockArray(){
+
+    let clock = [];
+    let m = [0,30];
+
+    for (let h = 0; h <= 23; h++) {
+        m.forEach(mi => {
+            let timeS = ("0" + h).slice(-2) + ":" + ("0" + mi).slice(-2);
+            clock.push(timeS);
+        }) 
+    }
+    return clock;
+}
+
+
 
 //TODO
 function responseCheck(data){
-    console.log(data)
     window.location.reload();
+    console.log(data)
 }
 
 

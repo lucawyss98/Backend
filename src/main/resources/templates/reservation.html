@@ -6,21 +6,26 @@
 </head>
 <body>
 	<h1>Court Reservation</h1>
-	<form action="" id="makeReservation">
+	<form id="makeReservation">
 		<div>
 			<h2>Make Reservation</h2>
 			<label for="date">Date:</label>
 			<input type="date" id="date" name="date">
 		</div>
-			
-		<div>
-			<label for="time">Time:</label>
-			<select id="time" name="time" multiple></select>
-		</div>
 
 		<div>
 			<label for="court">Court:</label>
 			<select id="court" name="court"></select>
+		</div>
+			
+		<div>
+			<label for="startTime">Reservation from:</label>
+			<select id="startTime" name="startTime"></select>
+		</div>
+
+		<div>
+			<label for="endTime">Reservation till:</label>
+			<select id="endTime" name="endTime"></select>
 		</div>
 
 		<input type="submit" id="submitbtn" value="Make reservation">

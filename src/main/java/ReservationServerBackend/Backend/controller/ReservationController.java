@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ReservationServerBackend.Backend.authentication.authMessages.RegisterRequest;
-import ReservationServerBackend.Backend.controller.msgs.AddCourtMsg;
 import ReservationServerBackend.Backend.entity.Court;
 import ReservationServerBackend.Backend.entity.Reservation;
 import ReservationServerBackend.Backend.entity.Sport;
@@ -77,6 +76,7 @@ public class ReservationController {
     // REST Courts
 
     @GetMapping("/sports")
+    @ResponseBody
     public List<Sport> getSport(){
         return Arrays.asList(Sport.values());
     }
@@ -89,14 +89,7 @@ public class ReservationController {
 
     @PostMapping("/addcourt")
     @ResponseBody
-    public String editCourt(@RequestBody AddCourtMsg courtmsg){
-        Court c = Court.builder()
-                    .name(courtmsg.getName())
-                    .sport(Sport.valueOf(courtmsg.getSport()))
-                    .openTime(courtmsg.getOpenTime())
-                    .closeTime(courtmsg.getCloseTime())
-                    .build();
-
+    public String editCourt(@RequestBody Court c){
         courtRepo.save(c);
         return "ok";
     }
