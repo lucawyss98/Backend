@@ -49,10 +49,10 @@ public class ReservationController {
                 .date(rMsg.getDate())
                 .build();
             reservationRepo.save(r);
+            return "ok";
         }catch(Exception e){
-
+            return "error";
         }
-        return "ok";
     }
 
     @GetMapping("/all")

@@ -51,19 +51,17 @@ function makeReservation(){
         username: sessionStorage.getItem("username")
     }
     console.log(res)
-/*     fetch(serverUrl + "add", {
+    fetch(SERVERURL + "add", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
         },
         body: JSON.stringify(res),
     })
-    .then((response) => response.json())
-    .then((data) => console.log(data))
+    .then((response) => checkresponse(response))
     .catch((err) => console.error(err));
 
-    loadReservations() */
 }
 
 //++++++++++ Functions +++++
@@ -278,6 +276,8 @@ function compareTime(timestamp, timestamp1){
 }
 
 function checkresponse(data){
+    window.location.reload();
+    console.log(data)
     //TODO antwort und close
 }
 
