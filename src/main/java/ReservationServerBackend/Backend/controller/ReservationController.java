@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ReservationServerBackend.Backend.authentication.authMessages.RegisterRequest;
+import ReservationServerBackend.Backend.controller.msgs.ReservationMsg;
 import ReservationServerBackend.Backend.entity.Court;
 import ReservationServerBackend.Backend.entity.Reservation;
 import ReservationServerBackend.Backend.entity.Sport;
@@ -34,9 +35,23 @@ public class ReservationController {
 
     @PostMapping("/add")
     @ResponseBody
-    public String addReservation(@RequestBody Reservation reservation){
+    public String addReservation(@RequestBody ReservationMsg rMsg){
         //TODO logik, ist termin frei
-        reservationRepo.save(reservation);
+        
+        try{
+            User u = userRepo.findByUsername(rMsg.getUsername()).orElseThrow();
+            Court c = courtRepo.findByName(rMsg.getCourtName()).orElseThrow();
+            Reservation r = Reservation.builder()
+                .court_id(c)
+                .user_id(u)
+                .startTime(rMsg.getStartTime())
+                .endTime(rMsg.getEndTime())
+                .date(rMsg.getDate())
+                .build();
+            reservationRepo.save(r);
+        }catch(Exception e){
+
+        }
         return "ok";
     }
 
@@ -130,7 +145,7 @@ public class ReservationController {
         
     }
 
-    //Views
+    //++++++++Views+++++++++++++
     
     @GetMapping("/")
     public String index(){

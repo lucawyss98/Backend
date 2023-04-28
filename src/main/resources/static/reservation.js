@@ -1,24 +1,24 @@
-const SERVERURL = "http://localhost:8080/"
-
 sessionStorage.setItem("username", "luca1")
+var serverUrl = "http://localhost:8080/";
+var courts = []
+var court
+var reservations = []
+var courtSelector
+var startSelector
+var endSelector
+var dateSelector
 
-var courtSelector = document.getElementById("court")
-var startSelector = document.getElementById("startTime")
-var endSelector = document.getElementById("endTime")
-var dateSelector = document.getElementById("date")
+loadReservations()
 
 /* var minDate = new Date() + 1
 dateSelector.min = minDate.toISOString().split("T")[0]
 var maxDate = new Date() + 30
 dateSelector.max = maxDate.toISOString().split("T")[0] */
-var courts = []
-var reservations = []
 
 
-window.onload = loadReservations
-dateSelector.addEventListener("change", setTimelogic)
-courtSelector.addEventListener("change", setTimelogic)
-startSelector.onchange = setEndselection
+
+
+
 
 
 
@@ -26,7 +26,15 @@ startSelector.onchange = setEndselection
 
 function loadReservations(){
 
-    fetch(SERVERURL + "courts")
+    courtSelector = document.getElementById("court")
+    startSelector = document.getElementById("startTime")
+    endSelector = document.getElementById("endTime")
+    dateSelector = document.getElementById("date")
+    document.getElementById("court").addEventListener("change", setTimelogic)
+    document.getElementById("startTime").onchange = setEndselection
+    document.getElementById("makeBtn").addEventListener("click", makeReservation)
+
+    fetch(serverUrl + "courts")
     .then((response) => response.json())
     .then((data) => buildReservations(data))
     .catch((err) => console.error(err)); 
@@ -35,19 +43,27 @@ function loadReservations(){
 
 function makeReservation(){
 
-    fetch(SERVERURL + "add", {
+    var res = {
+        startTime: startSelector.value,
+        endTime: endSelector.value,
+        date: dateSelector.value,
+        courtName: courtSelector.value,
+        username: sessionStorage.getItem("username")
+    }
+    console.log(res)
+/*     fetch(serverUrl + "add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
         },
-        body: JSON.stringify(reservation),
+        body: JSON.stringify(res),
     })
     .then((response) => response.json())
     .then((data) => console.log(data))
     .catch((err) => console.error(err));
 
-    loadReservations()
+    loadReservations() */
 }
 
 //++++++++++ Functions +++++
@@ -100,24 +116,22 @@ function buildReservations(courtlist){
 }
 
 function buildOptions(){
-    console.log(courts)
     courts.forEach(c => {
-
+    courtSelector = document.getElementById("court")
         let option = document.createElement("option")
         option.textContent = c.name
-        console.log(courtSelector)
         courtSelector.append(option)
     })
 
     let timeslots = clockArray()
     let v = 0
+    startSelector = document.getElementById("startTime")
+    endSelector = document.getElementById("endTime")
     timeslots.forEach(t => {
         let o = document.createElement("option")
         let o1 = document.createElement("option")
-        o.value = t
-        o.id = v
-        o1.value = t
-        o1.className = v
+        o.textContent = t
+        o1.textContent = t
         startSelector.add(o)
         endSelector.add(o1)
     })
@@ -126,13 +140,16 @@ function buildOptions(){
 function setTimelogic(){
 
     let date = dateSelector.value
-    let court = courtSelector.value
-    let startoptions = startSelector.getElementsByTagName("option")
+    court = courtSelector.value
+    let startOptions = startSelector.getElementsByTagName("option")
 
     if(date !=null && date != undefined && date!= "" && court !=null && court != undefined && court != ""){
+        for (let x = 0; x<startOptions.length; x++){
+            startOptions[x].disabled = false
+        }
         for (let i =0; i<courts.length; i++){
             if(courts[i].name == court){
-                reservations = c.reservations
+                reservations = courts[i].reservations
                 court = courts[i]
                 break;
             }
@@ -140,38 +157,38 @@ function setTimelogic(){
 
         //++set starttime++
         //disable bis opening time
-        for (let j = 0; j<startoptions.length; j++){
-            if(court.startTime.slice(0,5) == startoptions[j].textContent){
+        for (let j = 0; j<startOptions.length; j++){
+            if(court.openTime.slice(0,5) == startOptions[j].textContent){
                 break;
             }
-            startoptions[j].disabled = true
+            startOptions[j].disabled = true
         }
 
         // disable after closing time
-        for (let j = startoptions.length-1; j>=0; j--){
-            if(court.closeTime.slice(0,5) == startoptions[j].textContent){
+        for (let j = startOptions.length-1; j>=0; j--){
+            if(court.closeTime.slice(0,5) == startOptions[j].textContent){
                 break;
             }
-            startoptions[j].disabled = true
+            startOptions[j].disabled = true
         }
 
         //existing reservations
         reservations.forEach(r => {
             if(r.date == date){
                 let soid,eoid = undefined
-                for (let i = 0; i < startoptions.length; j++ ){
+                for (let i = 0; i < startOptions.length; j++ ){
                      //search beginning
-                    if(startoptions[i].value == r.startTime.slice(0,5)){
-                        soid = startoptions[i].id
+                    if(startOptions[i].value == r.startTime.slice(0,5)){
+                        soid = startOptions[i].id
                     }
                     //search end
-                    if(startoptions[i].value == r.endTime.slice(0,5)){
-                        eoid = startoptions[i].id
+                    if(startOptions[i].value == r.endTime.slice(0,5)){
+                        eoid = startOptions[i].id
                     }
                 }
                 //disable everything between
                 for (let x = soid; x<eoid; x++ ){
-                    startoptions[x].disabled = true
+                    startOptions[x].disabled = true
                 }
             }
 
@@ -183,26 +200,44 @@ function setEndselection(){
     let endOptions = endSelector.getElementsByTagName("option")
     if(date !=null && date != undefined && date!= "" && court !=null && court != undefined && court != "" 
         && startSelector.value != null && startSelector.value != undefined && startSelector != ""){
-        
-            //disable everything before the starting time
-            let start = startSelector.value
-            for(let i = 0; i < endOptions.length; i++){
-                if(endOptions[i].value == start){
-                    endOptions[i].disabled = true
-                    break;
-                }
-                endOptions[i].disabled = true
+        //reenable everithing
+        for (let x = 0; x<endOptions.length; x++){
+            endOptions[x].disabled = false
+        }
+        //disable bis opening time
+        for (let j = 0; j<endOptions.length; j++){
+            if(court.openTime.slice(0,5) == endOptions[j].textContent){
+                break;
             }
-            reservations.forEach(r => {
-                if(compareTime(start, r.endTime.slice(0,5)) == -1){
-                    for (let y = endOptions.length; y<0; y--){
-                        if(endOptions[y].value == r.startTime.slice(0,5)){
-                            break;
-                        }
-                        endOptions[y].disabled=true
+            endOptions[j].disabled = true
+        }
+
+        // disable after closing time
+        for (let j = endOptions.length-1; j>=0; j--){
+            if(court.closeTime.slice(0,5) == endOptions[j].textContent){
+                break;
+            }
+            endOptions[j].disabled = true
+        }
+        //disable everything before the starting time
+        let start = startSelector.value
+        for(let i = 0; i < endOptions.length; i++){
+            if(endOptions[i].value == start){
+                endOptions[i].disabled = true
+                break;
+            }
+            endOptions[i].disabled = true
+        }
+        reservations.forEach(r => {
+            if(compareTime(start, r.endTime.slice(0,5)) == -1){
+                for (let y = endOptions.length; y<0; y--){
+                    if(endOptions[y].value == r.startTime.slice(0,5)){
+                        break;
                     }
+                    endOptions[y].disabled=true
                 }
-            })
+            }
+        })
     }
 }
 
