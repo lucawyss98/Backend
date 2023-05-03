@@ -2,13 +2,12 @@ sessionStorage.setItem("username", "luca1")
 var serverUrl = "http://localhost:8080/";
 var courts = []
 var court
-var reservations = []
 var courtSelector
 var startSelector
 var endSelector
 var dateSelector
 
-loadReservations()
+window.onload = loadReservations
 
 /* var minDate = new Date() + 1
 dateSelector.min = minDate.toISOString().split("T")[0]
@@ -30,8 +29,9 @@ function loadReservations(){
     startSelector = document.getElementById("startTime")
     endSelector = document.getElementById("endTime")
     dateSelector = document.getElementById("date")
-    document.getElementById("court").addEventListener("change", setTimelogic)
-    document.getElementById("startTime").onchange = setEndselection
+    dateSelector.onchange = setTimelogic
+    courtSelector.addEventListener("change", setTimelogic)
+    startSelector.onchange = setEndselection
     document.getElementById("makeBtn").addEventListener("click", makeReservation)
 
     fetch(serverUrl + "courts")
@@ -51,7 +51,7 @@ function makeReservation(){
         username: sessionStorage.getItem("username")
     }
     console.log(res)
-    fetch(SERVERURL + "add", {
+    fetch(serverUrl + "add", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -69,46 +69,44 @@ function makeReservation(){
 function buildReservations(courtlist){
 
     courts = courtlist
-
+    console.log(courts)
     let tablediv = document.getElementById("reservations")
         courts.forEach(court => {
-
-            let table = document.createElement('table');
-            let tablehead = document.createElement("thead")
-            let tdate = document.createElement("th"), 
-                ttime = document.createElement("th"),
-                tuser = document.createElement("th")
-                title = document.createElement("h3")
-            title.innerHTML = "Reservations on " + court.name
-            tdate.innerHTML = "Date"
-            ttime.innerHTML = "Time"
-            tuser.innerHTML = "User"
-
-            tablehead.append(tdate, ttime, tuser)
-            table.append(tablehead)
-            tablediv.appendChild(title)
-
-            //loading all reservations into tables
-            let tbody = document.createElement("tbody")
-
-            court.reservations.forEach(reservation => {
-
-                    let row = document.createElement('tr');
-                    let cell = document.createElement("td")
-                    cell.innerHTML = reservation.date
-                    let cell1 = document.createElement("td")
-                    cell1.innerHTML = reservation.startTime + " - " + reservation.endTime
-                    let cell2 = document.createElement("td")
-                    cell2.innerHTML = reservation.user_id.username
-
-                    row.append(cell, cell1, cell2)
-                    tbody.appendChild(row);          
-            });        
             
-            table.appendChild(tbody)
-            
-            tablediv.appendChild(table)
-            tablediv.appendChild(document.createElement("br"))  
+            if(court.reservations.length != 0){
+                let table = document.createElement('table');
+                let tablehead = document.createElement("thead")
+                let tdate = document.createElement("th"), 
+                    ttime = document.createElement("th"),
+                    title = document.createElement("h3")
+                title.innerHTML = "Reservations on " + court.name
+                tdate.innerHTML = "Date"
+                ttime.innerHTML = "Time"
+
+                tablehead.append(tdate, ttime)
+                table.append(tablehead)
+                tablediv.appendChild(title)
+
+                //loading all reservations into tables
+                let tbody = document.createElement("tbody")
+
+                court.reservations.forEach(reservation => {
+
+                        let row = document.createElement('tr');
+                        let cell = document.createElement("td")
+                        cell.innerHTML = reservation.date
+                        let cell1 = document.createElement("td")
+                        cell1.innerHTML = reservation.startTime.slice(0,5) + " - " + reservation.endTime.slice(0,5)
+
+                        row.append(cell, cell1)
+                        tbody.appendChild(row);          
+                });        
+                
+                table.appendChild(tbody)
+                
+                tablediv.appendChild(table)
+                tablediv.appendChild(document.createElement("br")) 
+            }
         });
     buildOptions()
 }
@@ -122,17 +120,19 @@ function buildOptions(){
     })
 
     let timeslots = clockArray()
-    let v = 0
     startSelector = document.getElementById("startTime")
     endSelector = document.getElementById("endTime")
-    timeslots.forEach(t => {
+    for(let v = 0; v < timeslots.length; v++){
         let o = document.createElement("option")
         let o1 = document.createElement("option")
-        o.textContent = t
-        o1.textContent = t
+        o.textContent = timeslots[v]
+        o.id = v
+        o1.textContent = timeslots[v]
+        o1.id = v
+        o1.disabled = true
         startSelector.add(o)
         endSelector.add(o1)
-    })
+    }
 }
 
 function setTimelogic(){
@@ -145,9 +145,9 @@ function setTimelogic(){
         for (let x = 0; x<startOptions.length; x++){
             startOptions[x].disabled = false
         }
+        //get reservations from selectet court
         for (let i =0; i<courts.length; i++){
             if(courts[i].name == court){
-                reservations = courts[i].reservations
                 court = courts[i]
                 break;
             }
@@ -165,16 +165,18 @@ function setTimelogic(){
         // disable after closing time
         for (let j = startOptions.length-1; j>=0; j--){
             if(court.closeTime.slice(0,5) == startOptions[j].textContent){
+                startOptions[j].disabled = true
                 break;
             }
             startOptions[j].disabled = true
         }
 
         //existing reservations
-        reservations.forEach(r => {
+        court.reservations.forEach(r => {
+
             if(r.date == date){
-                let soid,eoid = undefined
-                for (let i = 0; i < startOptions.length; j++ ){
+                let soid,eoid
+                for (let i = 0; i < startOptions.length; i++ ){
                      //search beginning
                     if(startOptions[i].value == r.startTime.slice(0,5)){
                         soid = startOptions[i].id
@@ -196,6 +198,7 @@ function setTimelogic(){
 
 function setEndselection(){
     let endOptions = endSelector.getElementsByTagName("option")
+    let date = dateSelector.value
     if(date !=null && date != undefined && date!= "" && court !=null && court != undefined && court != "" 
         && startSelector.value != null && startSelector.value != undefined && startSelector != ""){
         //reenable everithing
@@ -205,6 +208,7 @@ function setEndselection(){
         //disable bis opening time
         for (let j = 0; j<endOptions.length; j++){
             if(court.openTime.slice(0,5) == endOptions[j].textContent){
+                endOptions[j].disabled = true
                 break;
             }
             endOptions[j].disabled = true
@@ -226,16 +230,20 @@ function setEndselection(){
             }
             endOptions[i].disabled = true
         }
-        reservations.forEach(r => {
-            if(compareTime(start, r.endTime.slice(0,5)) == -1){
-                for (let y = endOptions.length; y<0; y--){
-                    if(endOptions[y].value == r.startTime.slice(0,5)){
-                        break;
+        //disable reservation times
+
+        court.reservations.forEach(r => {
+            if(date == r.date){
+                if(compareTime(start, r.endTime.slice(0,5)) == -1){
+                    for(let a = endOptions.length -1 ; a>=0; a--){
+                        if(r.startTime.slice(0,5) == endOptions[a].textContent){
+                            break
+                        }
+                        endOptions[a].disabled = true
                     }
-                    endOptions[y].disabled=true
                 }
             }
-        })
+        })     
     }
 }
 
@@ -254,7 +262,8 @@ function clockArray(){
 }
 
 function compareTime(timestamp, timestamp1){
-    let timeList = clockarray()
+
+    let timeList = clockArray()
     let pos1, pos2
     for (let x = 0; x < timeList.length; x++){
         if(timeList[x] == timestamp){

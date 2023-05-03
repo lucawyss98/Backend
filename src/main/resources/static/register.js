@@ -1,6 +1,6 @@
-
-  
 const SERVERURL = "http://localhost:8080/";
+
+document.getElementById("registerBtn").onclick = register
 
 function register() {
     var username = document.getElementById("username");
@@ -9,9 +9,6 @@ function register() {
     var password2 = document.getElementById("psw2");
     var fname = document.getElementById("firstname");
     var lname = document.getElementById("lastname");
-    var errorUsername = document.getElementById("errorUser");
-    var errorEmail = document.getElementById("errorEmail");
-    console.log(username.value);
     
     var isFormula = true;
     let messages = [];
@@ -50,7 +47,7 @@ function register() {
         body: JSON.stringify(user),
       })
         .then((response) => response.json())
-        .then((data) => registerCheck(data.answer))
+        .then((data) => console.log(data))
         .catch((err) => console.error(err));
     }
 }
@@ -58,14 +55,14 @@ function register() {
 function registerCheck(answer) {
     switch (answer) {
       case "username":
-        errorUsername.innerText = "Username already exists";
+        alert("Username already exists")
         break;
       case "email":
-        errorEmail.innerText = "Email already exists";
+        alert("Email already exists")
         break;
-      case "ok":
-        console.log("success");
-        sessionStorage.setItem("username", username.value)
+      default:
+        console.log(answer);
+        sessionStorage.setItem("username", username)
         window.location.replace(SERVERURL)
         break;
     }

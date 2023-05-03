@@ -2,6 +2,8 @@ package ReservationServerBackend.Backend.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /* import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails; */
@@ -14,29 +16,31 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Data
 public class User {
     
     @Id
     @GeneratedValue
     private int id;
+
     private String firstname;
     private String lastname;
     private String username;
     private String password;
     private String email;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @JsonIgnoreProperties("user_id")
     @OneToMany(mappedBy="user_id")
     private List<Reservation> reservations;
 
@@ -60,11 +64,5 @@ public class User {
     public boolean isEnabled() {
         return true;
     } */
-
-    
-    public void addReservation(Reservation r){
-        this.reservations.add(r);
-    }
-
     
 }

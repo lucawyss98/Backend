@@ -10,6 +10,7 @@ loginbtn.addEventListener("click", (e) => {
 });
 
 function login() {
+
   sessionStorage.setItem("username", userlogin.value);
   var user = {
     username: userlogin.value,
@@ -30,12 +31,13 @@ function login() {
 }
 
 function loginHandler(data) {
-  switch (data) {
+  switch (data.answer) {
     case "wrong":
       alert("username or password wrong");
       break;
     case "ok":
-      sessionStorage.setItem("username", userlogin.value);
-      location.replace("./reservation.html");
+      localStorage.setItem("username", userlogin.value);
+      localStorage.setItem("token", "Bearer" + data.token);
+      location.replace("reservation");
   }
 }

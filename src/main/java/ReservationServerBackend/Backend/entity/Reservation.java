@@ -3,6 +3,8 @@ package ReservationServerBackend.Backend.entity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -29,10 +31,12 @@ public class Reservation {
     private LocalTime endTime;
     private LocalDate date;
 
+    @JsonIgnoreProperties("reservations")
     @ManyToOne
     @JoinColumn(name = "court_id", nullable= false)
     private Court court_id;
 
+    @JsonIgnoreProperties("reservations")
     @ManyToOne
     @JoinColumn(name = "user_id", nullable=false)
     private User user_id;

@@ -1,4 +1,4 @@
-package ReservationServerBackend.Backend.authentication.authMessages;
+package ReservationServerBackend.Backend.controller.msgs;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

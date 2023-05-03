@@ -3,6 +3,8 @@ package ReservationServerBackend.Backend.entity;
 import java.time.LocalTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -34,6 +36,7 @@ public class Court {
     private LocalTime openTime;
     private LocalTime closeTime;
     
+    @JsonIgnoreProperties("court_id")
     @OneToMany(mappedBy = "court_id")
     private List<Reservation> reservations;
 
@@ -43,9 +46,4 @@ public class Court {
         this.openTime = opentime;
         this.closeTime = closetime;
     }
-    
-    public void addReservation(Reservation r){
-        reservations.add(r);
-    }
-
 }

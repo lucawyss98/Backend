@@ -8,5 +8,6 @@ import ReservationServerBackend.Backend.entity.Court;
 
 public interface CourtRepository extends JpaRepository<Court, Integer>{
     
+    
     Optional<Court> findByName(String name);
 }
