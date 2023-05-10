@@ -1,4 +1,3 @@
-sessionStorage.setItem("username", "luca1")
 var serverUrl = "http://localhost:8080/";
 var courts = []
 var court
@@ -8,18 +7,6 @@ var endSelector
 var dateSelector
 
 window.onload = loadReservations
-
-/* var minDate = new Date() + 1
-dateSelector.min = minDate.toISOString().split("T")[0]
-var maxDate = new Date() + 30
-dateSelector.max = maxDate.toISOString().split("T")[0] */
-
-
-
-
-
-
-
 
 // +++++ API +++++++++
 
@@ -33,6 +20,10 @@ function loadReservations(){
     courtSelector.addEventListener("change", setTimelogic)
     startSelector.onchange = setEndselection
     document.getElementById("makeBtn").addEventListener("click", makeReservation)
+/*     var minDate = new Date() + 1
+    dateSelector.min = minDate.toISOString().split("T")[0]
+    var maxDate = new Date() + 30
+    dateSelector.max = maxDate.toISOString().split("T")[0] */
 
     fetch(serverUrl + "courts")
     .then((response) => response.json())
@@ -50,7 +41,6 @@ function makeReservation(){
         courtName: courtSelector.value,
         username: sessionStorage.getItem("username")
     }
-    console.log(res)
     fetch(serverUrl + "add", {
         method: "POST",
         headers: {

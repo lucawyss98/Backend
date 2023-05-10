@@ -1,43 +1,9 @@
+document.getElementById("login").onclick = setAction
 
-const SERVERURL = "http://localhost:8080/";
-const userlogin = document.getElementById("username");
-const passwordlogin = document.getElementById("password");
-const loginbtn = document.getElementById("submit");
-
-loginbtn.addEventListener("click", (e) => {
-  e.preventDefault();
-  login();
-});
-
-function login() {
-
-  sessionStorage.setItem("username", userlogin.value);
-  var user = {
-    username: userlogin.value,
-    password: passwordlogin.value,
-  };
-
-  fetch(SERVERURL + "/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-    body: JSON.stringify(user),
-  })
-    .then((response) => response.json())
-    .then((data) => loginHandler(data.answer))
-    .catch((err) => console.error(err));
-}
-
-function loginHandler(data) {
-  switch (data.answer) {
-    case "wrong":
-      alert("username or password wrong");
-      break;
-    case "ok":
-      localStorage.setItem("username", userlogin.value);
-      localStorage.setItem("token", "Bearer" + data.token);
-      location.replace("reservation");
+function setAction(event) {
+  event.preventDefault()
+  let username = document.getElementById("username").value
+  sessionStorage.setItem("username", username);
+  console.log(sessionStorage.getItem("username"))
+  document.getElementById("loginForm").requestSubmit()
   }
-}

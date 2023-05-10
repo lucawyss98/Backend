@@ -6,9 +6,6 @@ import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ReservationServerBackend.Backend.controller.msgs.LoginRequest;
 import ReservationServerBackend.Backend.controller.msgs.RegisterRequest;
 import ReservationServerBackend.Backend.controller.msgs.ReservationMsg;
 import ReservationServerBackend.Backend.entity.Court;
@@ -29,7 +25,6 @@ import ReservationServerBackend.Backend.entity.User;
 import ReservationServerBackend.Backend.repository.CourtRepository;
 import ReservationServerBackend.Backend.repository.ReservationRepository;
 import ReservationServerBackend.Backend.repository.UserRepository;
-import ReservationServerBackend.Backend.service.JwtService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -40,19 +35,15 @@ public class ReservationController {
     private final PasswordEncoder encoder;
     private final CourtRepository courtRepo;
     private final ReservationRepository reservationRepo;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
-
 
     // REST Reservation
 
     @PostMapping("/add")
     @ResponseBody
     public String addReservation(@RequestBody ReservationMsg rMsg){
-        //TODO logik, ist termin frei
         
         try{
-            User u = userRepo.findByUsername(rMsg.getUsername()).orElseThrow();
+            User u = userRepo.findByUsername(rMsg.getUsername());
             Court c = courtRepo.findByName(rMsg.getCourtName()).orElseThrow();
             Reservation r = Reservation.builder()
                 .court_id(c)
@@ -82,7 +73,7 @@ public class ReservationController {
         List<Reservation> reservations= new ArrayList<Reservation>();
 
         try{
-         User u = userRepo.findByUsername(username).orElseThrow();
+         User u = userRepo.findByUsername(username);
          reservations = u.getReservations();  
         }catch(Exception e){
             return reservations;
@@ -147,22 +138,23 @@ public class ReservationController {
                     .role(Role.USER)
                     .build();
                 userRepo.save(u);
-                return rr.getUsername();
+                return "ok";
             }
             return "username";
         }
         return "email";       
     }
 
-    @PostMapping("/authenticate")
-    public String authenticate(LoginRequest login){
+/*     @PostMapping("/auth")
+    @ResponseBody
+    public String authenticate(@RequestBody LoginRequest login){
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword()));
         if(authenticate.isAuthenticated()){
             return jwtService.generateToken(login.getUsername());
         }else{
             throw new UsernameNotFoundException("Invalid Userlogin");
         }
-    }
+    } */
 
     //++++++++Views+++++++++++++
     

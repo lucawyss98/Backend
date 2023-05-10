@@ -1,7 +1,5 @@
 package ReservationServerBackend.Backend.config;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,9 +17,13 @@ public class OwnUserDetailsService implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepo.findByUsername(username);
+        User user = userRepo.findByUsername(username);
 
-        return user.map(OwnUserDetails::new).orElseThrow(() -> new UsernameNotFoundException("user not Found: " + username));
+        if(user == null){
+            throw new UsernameNotFoundException("Username: " + username + "not found");
+        }
+        return new OwnUserDetails(user);
+        //return user.map(OwnUserDetails::new).orElseThrow(() -> new UsernameNotFoundException("user not Found: " + username));
         
     }
 
