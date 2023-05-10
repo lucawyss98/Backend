@@ -1,4 +1,3 @@
-sessionStorage.setItem("username", "luca1")
 var username = sessionStorage.getItem("username")
 const SERVERURL = "http://localhost:8080/"
 window.onload = loadReservations

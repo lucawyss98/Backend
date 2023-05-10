@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -115,11 +114,11 @@ public class ReservationController {
         courtRepo.save(c);
         return "ok";
     }
-
+    
     @DeleteMapping("/deletecourt")
     @ResponseBody
-    public String deleteCourt(@RequestBody int id){
-        courtRepo.deleteById(id);
+    public String deleteCourt(@RequestBody String id){
+        courtRepo.deleteById(Integer.parseInt(id));
         return "ok";
     }
 

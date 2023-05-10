@@ -53,22 +53,24 @@ function addCourt(){
 }
 
 function deleteCourt(){
+    if(confirm("Are you sure you want to delete the Court")){
+        let id = idl.innerHTML
+        if(id != null && id != undefined && id !=""){
+    
+            fetch(SERVERURL + "deletecourt", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                },
+                body: id,
+            })
+            .then((response) => responseCheck(response))
+            .catch((err) => console.error(err));
+    
+        }
+    }else{}
 
-    let id = idl.innerHTML
-    if(id != null && id != undefined && id !=""){
-
-        fetch(SERVERURL + "deletecourt", {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-            },
-            body: JSON.stringify(id),
-        })
-        .then((response) => responseCheck(response))
-        .catch((err) => console.error(err));
-
-    }
 }
 
 function loadCourts(){
@@ -191,7 +193,7 @@ function clockArray(){
 
 //TODO
 function responseCheck(data){
-    window.location.reload();
+    //window.location.reload();
     console.log(data)
 }
 
