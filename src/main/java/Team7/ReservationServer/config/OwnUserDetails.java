@@ -1,4 +1,4 @@
-package ReservationServerBackend.Backend.config;
+package Team7.ReservationServer.config;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import ReservationServerBackend.Backend.entity.User;
+import Team7.ReservationServer.entity.User;
 
 public class OwnUserDetails implements UserDetails{
 

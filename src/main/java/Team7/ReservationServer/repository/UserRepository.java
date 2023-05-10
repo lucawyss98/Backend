@@ -1,7 +1,8 @@
-package ReservationServerBackend.Backend.repository;
+package Team7.ReservationServer.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ReservationServerBackend.Backend.entity.User;
+
+import Team7.ReservationServer.entity.User;
 
 public interface UserRepository extends JpaRepository<User,Integer>{
 

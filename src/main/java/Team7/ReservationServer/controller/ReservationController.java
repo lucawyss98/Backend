@@ -1,4 +1,4 @@
-package ReservationServerBackend.Backend.controller;
+package Team7.ReservationServer.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ReservationServerBackend.Backend.controller.msgs.RegisterRequest;
-import ReservationServerBackend.Backend.controller.msgs.ReservationMsg;
-import ReservationServerBackend.Backend.entity.Court;
-import ReservationServerBackend.Backend.entity.Reservation;
-import ReservationServerBackend.Backend.entity.Role;
-import ReservationServerBackend.Backend.entity.Sport;
-import ReservationServerBackend.Backend.entity.User;
-import ReservationServerBackend.Backend.repository.CourtRepository;
-import ReservationServerBackend.Backend.repository.ReservationRepository;
-import ReservationServerBackend.Backend.repository.UserRepository;
+import Team7.ReservationServer.controller.msgs.RegisterRequest;
+import Team7.ReservationServer.controller.msgs.ReservationMsg;
+import Team7.ReservationServer.entity.Court;
+import Team7.ReservationServer.entity.Reservation;
+import Team7.ReservationServer.entity.Role;
+import Team7.ReservationServer.entity.Sport;
+import Team7.ReservationServer.entity.User;
+import Team7.ReservationServer.repository.CourtRepository;
+import Team7.ReservationServer.repository.ReservationRepository;
+import Team7.ReservationServer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

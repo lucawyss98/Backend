@@ -1,4 +1,4 @@
-package ReservationServerBackend.Backend.controller.msgs;
+package Team7.ReservationServer.controller.msgs;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest {
+public class RegisterRequest {
 
-    private String password;
+    private String firstname;
+    private String lastname;
     private String username;
+    private String email;
+    private String password;
 
 }

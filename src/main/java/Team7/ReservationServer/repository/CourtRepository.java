@@ -1,10 +1,10 @@
-package ReservationServerBackend.Backend.repository;
+package Team7.ReservationServer.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import ReservationServerBackend.Backend.entity.Court;
+import Team7.ReservationServer.entity.Court;
 
 public interface CourtRepository extends JpaRepository<Court, Integer>{
     

@@ -1,4 +1,4 @@
-package ReservationServerBackend.Backend.controller.msgs;
+package Team7.ReservationServer.controller.msgs;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

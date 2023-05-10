@@ -1,4 +1,4 @@
-package ReservationServerBackend.Backend.config;
+package Team7.ReservationServer.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

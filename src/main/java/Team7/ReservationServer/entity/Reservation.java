@@ -1,4 +1,4 @@
-package ReservationServerBackend.Backend.entity;
+package Team7.ReservationServer.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

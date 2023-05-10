@@ -1,4 +1,4 @@
-package ReservationServerBackend.Backend.config;
+package Team7.ReservationServer.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import ReservationServerBackend.Backend.entity.User;
-import ReservationServerBackend.Backend.repository.UserRepository;
+import Team7.ReservationServer.entity.User;
+import Team7.ReservationServer.repository.UserRepository;
 
 @Component
 public class OwnUserDetailsService implements UserDetailsService{
