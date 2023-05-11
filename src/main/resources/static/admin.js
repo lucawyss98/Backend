@@ -193,7 +193,7 @@ function clockArray(){
 
 //TODO
 function responseCheck(data){
-    //window.location.reload();
+    window.location.reload();
     console.log(data)
 }
 
