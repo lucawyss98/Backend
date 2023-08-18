@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import Team7.ReservationServer.controller.msgs.ServerResponseMsg;
+import Team7.ReservationServer.model.ReservationModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -34,36 +36,22 @@ public class ReservationController {
     private final PasswordEncoder encoder;
     private final CourtRepository courtRepo;
     private final ReservationRepository reservationRepo;
+    private final ReservationModel model = new ReservationModel();
 
     // REST Reservation
 
     @PostMapping("/add")
     @ResponseBody
-    public String addReservation(@RequestBody ReservationMsg rMsg){
+    public ServerResponseMsg addReservation(@RequestBody ReservationMsg rMsg){
         
         try{
-            User u = userRepo.findByUsername(rMsg.getUsername());
-            Court c = courtRepo.findByName(rMsg.getCourtName()).orElseThrow();
-            Reservation r = Reservation.builder()
-                .court_id(c)
-                .user_id(u)
-                .startTime(rMsg.getStartTime())
-                .endTime(rMsg.getEndTime())
-                .date(rMsg.getDate())
-                .build();
-            reservationRepo.save(r);
-            return "ok";
+            model.addReservation(rMsg);
+            return new ServerResponseMsg("ok");
         }catch(Exception e){
-            return "error";
+            return new ServerResponseMsg("error");
         }
     }
 
-    @GetMapping("/all")
-    @ResponseBody
-    public List<Reservation> reservations(){
-        List<Reservation> res =reservationRepo.findAll();
-        return res;
-    }
 
     @GetMapping("/mine/{username}")
     @ResponseBody
@@ -83,13 +71,13 @@ public class ReservationController {
 
     @DeleteMapping("/delete")
     @ResponseBody
-    public String deleteReservation(@RequestBody String id){
+    public ServerResponseMsg deleteReservation(@RequestBody String id){
 
         if(reservationRepo.existsById(Integer.parseInt(id))){
             reservationRepo.deleteById(Integer.parseInt(id));
-            return "ok";
+            return new ServerResponseMsg("ok");
         }
-        return "error";
+        return new ServerResponseMsg("error");
             
     }
 
@@ -104,28 +92,27 @@ public class ReservationController {
     @GetMapping("/courts")
     @ResponseBody
     public List<Court> courts(){
-        List<Court> c = courtRepo.findAll();
-        return c;
+        return courtRepo.findAll();
     }
 
     @PostMapping("/addcourt")
     @ResponseBody
-    public String editCourt(@RequestBody Court c){
+    public ServerResponseMsg editCourt(@RequestBody Court c){
         courtRepo.save(c);
-        return "ok";
+        return new ServerResponseMsg("ok");
     }
     
     @DeleteMapping("/deletecourt")
     @ResponseBody
-    public String deleteCourt(@RequestBody String id){
+    public ServerResponseMsg deleteCourt(@RequestBody String id){
         courtRepo.deleteById(Integer.parseInt(id));
-        return "ok";
+        return new ServerResponseMsg("ok");
     }
 
     //++++++++++++REST USER +++++++++++
     @PostMapping("/register")
     @ResponseBody
-    public String register(@RequestBody RegisterRequest rr){
+    public ServerResponseMsg register(@RequestBody RegisterRequest rr){
         if(!userRepo.existsByEmail(rr.getEmail())){
             if(!userRepo.existsByUsername(rr.getUsername())){
                 User u = User.builder()
@@ -137,55 +124,18 @@ public class ReservationController {
                     .role(Role.USER)
                     .build();
                 userRepo.save(u);
-                return "ok";
+                return new ServerResponseMsg("ok");
             }
-            return "username";
+            return new ServerResponseMsg("username");
         }
-        return "email";       
+        return new ServerResponseMsg("email");
     }
-
-/*     @PostMapping("/auth")
-    @ResponseBody
-    public String authenticate(@RequestBody LoginRequest login){
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword()));
-        if(authenticate.isAuthenticated()){
-            return jwtService.generateToken(login.getUsername());
-        }else{
-            throw new UsernameNotFoundException("Invalid Userlogin");
-        }
-    } */
 
     //++++++++Views+++++++++++++
     
     @GetMapping("/")
     public String index(){
         return "index";
-    }
-
-    @GetMapping("/reservation")
-    public String reservation(){
-        return "reservation";
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/admin")
-    public String admin(){
-        return "admin";
-    }
-
-    @GetMapping("/login")
-    public String login(){
-        return "login";
-    }
-
-    @GetMapping("/register")
-    public String register(){
-        return "register";
-    }
-
-    @GetMapping("/user")
-    public String user(){
-        return "user";
     }
 
 }
