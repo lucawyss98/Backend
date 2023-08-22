@@ -35,4 +35,9 @@ public class ViewController {
         return "user";
     }
 
+    @GetMapping("/")
+    public String index(){
+        return "index";
+    }
+
 }

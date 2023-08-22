@@ -1,12 +1,11 @@
 package Team7.ReservationServer.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import Team7.ReservationServer.controller.msgs.ServerResponseMsg;
+import Team7.ReservationServer.model.CourtModel;
 import Team7.ReservationServer.model.ReservationModel;
-import org.springframework.security.access.prepost.PreAuthorize;
+import Team7.ReservationServer.model.UserModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,56 +28,36 @@ import Team7.ReservationServer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Controller
+@Controller("/api")
 public class ReservationController {
 
     private final UserRepository userRepo;
-    private final PasswordEncoder encoder;
+
     private final CourtRepository courtRepo;
     private final ReservationRepository reservationRepo;
-    private final ReservationModel model = new ReservationModel();
+    private final ReservationModel reservationModel = new ReservationModel();
+    private final CourtModel courtModel = new CourtModel();
+    private final UserModel userModel = new UserModel();
 
     // REST Reservation
 
     @PostMapping("/add")
     @ResponseBody
     public ServerResponseMsg addReservation(@RequestBody ReservationMsg rMsg){
-        
-        try{
-            model.addReservation(rMsg);
-            return new ServerResponseMsg("ok");
-        }catch(Exception e){
-            return new ServerResponseMsg("error");
-        }
+        return reservationModel.addReservation(rMsg);
     }
 
 
     @GetMapping("/mine/{username}")
     @ResponseBody
     public List<Reservation> myReservation(@PathVariable String username){
-
-        List<Reservation> reservations= new ArrayList<Reservation>();
-
-        try{
-         User u = userRepo.findByUsername(username);
-         reservations = u.getReservations();  
-        }catch(Exception e){
-            return reservations;
-        }
-        
-        return reservations;
+        return reservationModel.getUserReservations(username);
     }
 
     @DeleteMapping("/delete")
     @ResponseBody
     public ServerResponseMsg deleteReservation(@RequestBody String id){
-
-        if(reservationRepo.existsById(Integer.parseInt(id))){
-            reservationRepo.deleteById(Integer.parseInt(id));
-            return new ServerResponseMsg("ok");
-        }
-        return new ServerResponseMsg("error");
-            
+        return reservationModel.deleteReservation(id);
     }
 
     // REST Courts
@@ -86,56 +65,36 @@ public class ReservationController {
     @GetMapping("/sports")
     @ResponseBody
     public List<Sport> getSport(){
-        return Arrays.asList(Sport.values());
+        return reservationModel.getSportOptions();
     }
 
     @GetMapping("/courts")
     @ResponseBody
     public List<Court> courts(){
-        return courtRepo.findAll();
+        return courtModel.findAll();
     }
 
     @PostMapping("/addcourt")
     @ResponseBody
     public ServerResponseMsg editCourt(@RequestBody Court c){
-        courtRepo.save(c);
-        return new ServerResponseMsg("ok");
+        return courtModel.addCourt(c);
     }
     
     @DeleteMapping("/deletecourt")
     @ResponseBody
     public ServerResponseMsg deleteCourt(@RequestBody String id){
-        courtRepo.deleteById(Integer.parseInt(id));
-        return new ServerResponseMsg("ok");
+        return courtModel.deleteCourt(id);
     }
 
     //++++++++++++REST USER +++++++++++
     @PostMapping("/register")
     @ResponseBody
     public ServerResponseMsg register(@RequestBody RegisterRequest rr){
-        if(!userRepo.existsByEmail(rr.getEmail())){
-            if(!userRepo.existsByUsername(rr.getUsername())){
-                User u = User.builder()
-                    .username(rr.getUsername())
-                    .email(rr.getEmail())
-                    .firstname(rr.getFirstname())
-                    .lastname(rr.getLastname())
-                    .password(encoder.encode(rr.getPassword()))
-                    .role(Role.USER)
-                    .build();
-                userRepo.save(u);
-                return new ServerResponseMsg("ok");
-            }
-            return new ServerResponseMsg("username");
-        }
-        return new ServerResponseMsg("email");
+        return userModel.register(rr);
     }
 
     //++++++++Views+++++++++++++
     
-    @GetMapping("/")
-    public String index(){
-        return "index";
-    }
+
 
 }
