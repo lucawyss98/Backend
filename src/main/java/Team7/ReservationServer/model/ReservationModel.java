@@ -10,12 +10,14 @@ import Team7.ReservationServer.repository.CourtRepository;
 import Team7.ReservationServer.repository.ReservationRepository;
 import Team7.ReservationServer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 @RequiredArgsConstructor
 public class ReservationModel {
 

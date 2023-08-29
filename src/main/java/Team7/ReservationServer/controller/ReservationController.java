@@ -27,17 +27,14 @@ import Team7.ReservationServer.repository.ReservationRepository;
 import Team7.ReservationServer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+
 @Controller("/api")
+@RequiredArgsConstructor
 public class ReservationController {
 
-    private final UserRepository userRepo;
-
-    private final CourtRepository courtRepo;
-    private final ReservationRepository reservationRepo;
-    private final ReservationModel reservationModel = new ReservationModel();
-    private final CourtModel courtModel = new CourtModel();
-    private final UserModel userModel = new UserModel();
+    private final ReservationModel reservationModel;
+    private final CourtModel courtModel;
+    private final UserModel userModel;
 
     // REST Reservation
 
@@ -46,7 +43,6 @@ public class ReservationController {
     public ServerResponseMsg addReservation(@RequestBody ReservationMsg rMsg){
         return reservationModel.addReservation(rMsg);
     }
-
 
     @GetMapping("/mine/{username}")
     @ResponseBody

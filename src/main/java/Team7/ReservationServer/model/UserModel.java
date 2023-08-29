@@ -5,9 +5,12 @@ import Team7.ReservationServer.controller.msgs.ServerResponseMsg;
 import Team7.ReservationServer.entity.Role;
 import Team7.ReservationServer.entity.User;
 import Team7.ReservationServer.repository.UserRepository;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class UserModel {
 
